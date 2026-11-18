@@ -6,7 +6,7 @@
 
 - **Python 3.8+** روی سیستم نصب باشد.
 - **Hermes Agent** نصب شده باشد (آخرین نسخه).
-- یک کسب‌وکار ثبت‌شده در حسابfa با دسترسی API.
+- یک کسب‌وکار ثبت‌شده در حسابفا با دسترسی API.
 
 ---
 
@@ -54,9 +54,9 @@ cp references/         ~/.hermes/skills/productivity/hesabfa/references/ -r
 
 ---
 
-## مرحله ۳ — کسب اعتبارنامه حسابfa
+## مرحله ۳ — کسب اعتبارنامه حسابفا
 
-1. وارد پنل حسابfa شوید: [hesabfa.com](https://www.hesabfa.com)
+1. وارد پنل حسابفا شوید: [hesabfa.com](https://www.hesabfa.com)
 2. به مسیر **تنظیمات > تنظیمات مالی > API** بروید.
 3. دو مقدار لازم دارید:
    - **apiKey** — کلید عمومی دسترسی
@@ -191,14 +191,14 @@ python3 "$(hesabfa)/scripts/hesabfa.py" invoice save \
 | مشکل | راه‌حل |
 |------|--------|
 | `exit code 4: apiKey تنظیم نشده` | متغیر `HESABFA_API_KEY` را ست کنید |
-| `exit code 2: HTTP 403` | loginToken منقضی شده — از پنل حسابfa جدید بگیرید |
+| `exit code 2: HTTP 403` | loginToken منقضی شده — از پنل حسابفا جدید بگیرید |
 | `exit code 101: TooManyRequests` | ۱۰ ثانیه صبر کنید (CLI خودش retry می‌کند) |
-| `خطای 199: Invalid login token` | توکن را مجدداً از پنل حسابfa دریافت کنید |
+| `خطای 199: Invalid login token` | توکن را مجدداً از پنل حسابفا دریافت کنید |
 | `SystemExit: فرمت تاریخ نامعتبر` | از فرمت `1404/08/23` یا `2025-11-14` استفاده کنید |
 
 ---
 
 ## منبع
 
-- مستندات رسمی حسابfa: [https://www.hesabfa.com/help/api](https://www.hesabfa.com/help/api)
+- مستندات رسمی حسابفا: [https://www.hesabfa.com/help/api](https://www.hesabfa.com/help/api)
 - پروژه GitHub: `<LINK_REPO>`
