@@ -1,116 +1,172 @@
 # راهنمای نصب و استفاده از اسکیل حسابفا (Hesabfa) در Hermes Agent
 
-این راهنما مراحل نصب، راه‌اندازی و استفاده از اسکیل `hesabfa-accounting` را روی سیستم شخصی شما توضیح می‌دهد.
+این راهنما مراحل نصب، راه‌اندازی و استفاده از اسکیل `hesabfa-accounting` را روی سیستم شخصی شما توضیح می‌دهد. با نصب این مهارت، هرمس می‌تواند به بیش از ۹۲ متد API حسابفا متصل شده و امور حسابداری را با زبان محاوره‌ای مدیریت کند.
 
-## پیش‌نیازها
+## 📋 پیش‌نیازها
 
-- **Python 3.8+** روی سیستم نصب باشد.
-- **Hermes Agent** نصب شده باشد (آخرین نسخه).
-- یک کسب‌وکار ثبت‌شده در حسابفا با دسترسی API.
+پیش از شروع، باید موارد زیر روی سیستم شما نصب باشند. در ادامه دستورات نصب برای هر سیستم‌عامل آورده شده است:
+
+### 💻 نصب پیش‌نیازها در ویندوز (PowerShell)
+ترمینال PowerShell را به عنوان Administrator (مدیر) باز کنید و دستورات زیر را اجرا کنید:
+```powershell
+# ۱. نصب پایتون (Python 3)
+winget install --id Python.Python.3 -e --source winget
+
+# ۲. نصب گیت (Git)
+winget install --id Git.Git -e --source winget
+
+# ۳. نصب Hermes Agent
+iex (irm https://hermes-agent.nousresearch.com/install.ps1)
+```
+
+### 🍏 نصب پیش‌نیازها در macOS
+ترمینال (Terminal) را باز کنید و دستورات زیر را اجرا کنید:
+```bash
+# ۱. نصب Homebrew (در صورت عدم نصب)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# ۲. نصب پایتون و گیت
+brew install python git
+
+# ۳. نصب Hermes Agent
+curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
+```
+
+### 🐧 نصب پیش‌نیازها در لینوکس
+ترمینال را باز کنید و بر اساس توزیع خود دستورات زیر را اجرا کنید:
+*   **Debian / Ubuntu:**
+    ```bash
+    sudo apt update
+    sudo apt install -y python3 python3-pip git
+    ```
+*   **Fedora:**
+    ```bash
+    sudo dnf install -y python3 git
+    ```
+*   **Arch Linux:**
+    ```bash
+    sudo pacman -S python git
+    ```
+**نصب Hermes Agent (لینوکس / WSL2):**
+```bash
+curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
+```
+
+> ⚠️ **نکته مهم:** پس از نصب پیش‌نیازها، حتماً ترمینال را ببندید و یک ترمینال جدید باز کنید تا دستورات شناسایی شوند.
 
 ---
 
-## مرحله ۱ — دریافت فایل‌های اسکیل
+## 🚀 مرحله ۱ — دریافت فایل‌های اسکیل
 
-### روش الف: دانلود ZIP و استخراج
+### روش الف: دانلود مستقیم فایل ZIP
+با دستورات زیر، فایل `hesabfa-accounting.zip` مستقیماً در همان مسیری که ترمینال باز است، دانلود می‌شود:
 
-```bash
-# فایل زیپ را دریافت کنید
-curl -L -o hesabfa-skill.zip <URL_دانلود>
-
-# استخراج در پوشه دلخواه
-unzip hesabfa-skill.zip -d ~/hesabfa-skill
+**💻 در ویندوز (PowerShell):**
+```powershell
+curl.exe -L -O https://github.com/msnwoodpainting/hesabfa-accounting/raw/main/hesabfa-accounting.zip
 ```
 
-### روش ب: کلون از گیت‌هاب
-
+**🐧 در لینوکس و 🍏 مک (Terminal):**
 ```bash
-git clone https://github.com/<REPO>/hesabfa-accounting.git
+curl -L -O https://github.com/msnwoodpainting/hesabfa-accounting/raw/main/hesabfa-accounting.zip
+# یا با استفاده از wget:
+# wget https://github.com/msnwoodpainting/hesabfa-accounting/raw/main/hesabfa-accounting.zip
+```
+
+### روش ب: کلون از گیت‌هاب (مناسب توسعه‌دهندگان)
+```bash
+git clone https://github.com/msnwoodpainting/hesabfa-accounting.git
 cd hesabfa-accounting
 ```
 
 ---
 
-## مرحله ۲ — کپی اسکیل به پوشه Hermes Agent
+## 📂 مرحله ۲ — کپی اسکیل به پوشه Hermes Agent
 
-فایل `SKILL.md` را به مسیر اسکิล‌های Hermes کپی کنید:
+فایل `hesabfa-accounting.zip` را از حالت زیپ خارج کنید و پوشه `hesabfa-accounting` را در مسیر اسکیل‌های Hermes کپی کنید.
 
-```bash
-# پیدا کردن مسیر اسکیل‌های Hermes
-echo $HERMES_SKILL_DIR
+**مسیرهای پیش‌فرض اسکیل‌ها در هرمس:**
 
-# اگر ست نشده بود، معمولاً یکی از مسیرهای زیر است:
-# macOS/Linux:  ~/.hermes/skills/productivity/
-# Windows:      %LOCALAPPDATA%\hermes\profiles\nine\skills\productivity\
+- **اگر پروفایل شخصی ندارید:**
+  `C:\Users\<YourUsername>\AppData\Local\hermes\skills\hesabfa-accounting`
+  *(گاهی هرمس آن را در پوشه `productivity` ذخیره می‌کند: `...\hermes\skills\productivity\hesabfa-accounting`)*
 
-# کپی فایل SKILL.md
-mkdir -p ~/.hermes/skills/productivity/hesabfa
-cp SKILL.md ~/.hermes/skills/productivity/hesabfa/SKILL.md
-cp scripts/hesabfa.py   ~/.hermes/skills/productivity/hesabfa/scripts/
-cp references/         ~/.hermes/skills/productivity/hesabfa/references/ -r
-```
+- **اگر از پروفایل شخصی استفاده می‌کنید:**
+  `C:\Users\<YourUsername>\AppData\Local\hermes\profiles\<Profilename>\skills\hesabfa-accounting`
+  *(در لینوکس و مک: `~/.local/share/hermes/profiles/<Profilename>/skills/`)*
 
-> **نکته:** نام پوشه اسکیل (`hesabfa`) باید دقیقاً مطابق فیلد `name` در SKILL.md باشد.
+> 💡 **روش خودکار:** می‌توانید فایل زیپ را به هرمس بدهید و بگویید: *"این یک اسکیل است با نام hesabfa-accounting، آن را در مسیر پروفایل `<Profilename>` برای من نصب کن."*
+
+> **نکته مهم:** نام پوشه اسکیل (`hesabfa-accounting`) باید دقیقاً مطابق فیلد `name` در فایل `SKILL.md` باشد.
 
 ---
 
-## مرحله ۳ — کسب اعتبارنامه حسابفا
+## 🔑 مرحله ۳ — کسب اعتبارنامه حسابفا
 
-1. وارد پنل حسابفا شوید: [hesabfa.com](https://www.hesabfa.com)
+1. وارد پنل حسابفا شوید: ([https://app.hesabfa.com](https://app.hesabfa.com))
 2. به مسیر **تنظیمات > تنظیمات مالی > API** بروید.
 3. دو مقدار لازم دارید:
    - **apiKey** — کلید عمومی دسترسی
-   - **loginToken** — توکن ورود موقتی (یا `userId` + `password` مالک)
-4. این مقادیر را جایزه ندارید — هرگز آن‌ها را در فایل متنی نگذارید.
+   - **loginToken** — توکن ورود موقت (یا `userId` + `password` مالک)
+
+> ⚠️ **هشدار امنیتی:** هرگز این مقادیر را در فایل‌های متنی، کدهای گیت‌هاب یا جاهای ناامن قرار ندهید.
 
 ---
 
-## مرحله ۴ — ست کردن متغیرهای محیطی
+## ⚙️ مرحله ۴ — ست کردن متغیرهای محیطی
 
-در همان terminal که Hermes Agent را اجرا می‌کنید، متغیرها را ست کنید:
+در همان ترمینالی که Hermes Agent را اجرا می‌کنید، متغیرها را ست کنید:
 
+**🐧 در لینوکس و 🍏 مک (Terminal):**
 ```bash
 export HESABFA_API_KEY="کلید-API-شما"
 export HESABFA_LOGIN_TOKEN="توکن-ورود-شما"
 ```
 
-> برای Windows PowerShell:
-> ```powershell
-> $env:HESABFA_API_KEY = "کلید-API-شما"
-> $env:HESABFA_LOGIN_TOKEN = "توکن-ورود-شما"
-> ```
+**💻 در ویندوز (PowerShell):**
+```powershell
+$env:HESABFA_API_KEY = "کلید-API-شما"
+$env:HESABFA_LOGIN_TOKEN = "توکن-ورود-شما"
+```
 
 ---
 
-## مرحله ۵ — تست اتصال (آفلاین)
+## 🧪 مرحله ۵ — تست اتصال (آفلاین)
 
-قبل از ارسال اولین درخواست، تست خودکار را اجرا کنید:
+قبل از ارسال اولین درخواست، تست خودکار را اجرا کنید. ابتدا وارد پوشه اسکیل شوید و سپس دستور را اجرا کنید (به یاد داشته باشید `<Profilename>` را با نام پروفایل خود جایگزین کنید):
 
+**در ویندوز:**
+```powershell
+cd "$env:LOCALAPPDATA\hermes\profiles\<Profilename>\skills\hesabfa-accounting"
+python .\scripts\hesabfa.py selftest
+```
+
+**در لینوکس و مک:**
 ```bash
-python3 "$(hesabfa)/scripts/hesabfa.py" selftest
+cd ~/.local/share/hermes/profiles/<Profilename>/skills/hesabfa-accounting
+python3 ./scripts/hesabfa.py selftest
 ```
 
-خروجی موفق:
-```
+**خروجی موفق:**
+```text
 خودآزمایی موفق: تبدیل تاریخ شمسی (به وقت تهران)، queryInfo، ترجمه‌ی search به فلتر و enum ها سالم هستند.
 ```
-
-اگر خطایی دیدید، Python و مسیر اسکریپت را بررسی کنید.
+اگر خطایی دیدید، نصب Python و مسیر اسکریپت را بررسی کنید.
 
 ---
 
-## نحوه استفاده — مثال‌های کاربردی
+## 💡 نحوه استفاده — مثال‌های کاربردی
+
+*(برای اجرای دستورات زیر، باید در پوشه `hesabfa-accounting` باشید)*
 
 ### جستجوی مشتری
 ```bash
-python3 "$(hesabfa)/scripts/hesabfa.py" contact list \
-  --search "شرکت آریا" \
-  --take 50
+python3 scripts/hesabfa.py contact list --search "شرکت آریا" --take 50
 ```
 
 ### ثبت مشتری جدید
 ```bash
-python3 "$(hesabfa)/scripts/hesabfa.py" contact save \
+python3 scripts/hesabfa.py contact save \
   --name "شرکت آریا" \
   --company "شرکت آریا" \
   --contact-type حقوقی \
@@ -120,6 +176,7 @@ python3 "$(hesabfa)/scripts/hesabfa.py" contact save \
 ```
 
 ### صدور فاکتور فروش
+ابتدا یک فایل به نام `invoice.json` با محتوای زیر بسازید:
 ```json
 {
   "date": "1404/08/23",
@@ -139,31 +196,27 @@ python3 "$(hesabfa)/scripts/hesabfa.py" contact save \
   ]
 }
 ```
+سپس دستور زیر را اجرا کنید:
 ```bash
-python3 "$(hesabfa)/scripts/hesabfa.py" invoice save \
-  --file /tmp/invoice.json
+python3 scripts/hesabfa.py invoice save --file invoice.json
 ```
 
 ### دریافت گزارش تراز آزمایشی
 ```bash
-python3 "$(hesabfa)/scripts/hesabfa.py" report trial-balance \
-  --start-date "1404/01/01" \
-  --end-date "1404/08/29"
+python3 scripts/hesabfa.py report trial-balance --start-date "1404/01/01" --end-date "1404/08/29"
 ```
 
-### تست dry-run (بدون ارسال)
+### تست Dry-run (بدون ارسال به سرور)
 ```bash
-python3 "$(hesabfa)/scripts/hesabfa.py" invoice save \
-  --file /tmp/invoice.json \
-  --dry-run
+python3 scripts/hesabfa.py invoice save --file invoice.json --dry-run
 ```
 
 ---
 
-## ساختار پوشه‌ها پس از نصب
+## 📁 ساختار پوشه‌ها پس از نصب
 
-```
-~/.hermes/skills/productivity/hesabfa/
+```text
+hesabfa-accounting/
 ├── SKILL.md                    # مستندات اصلی اسکیل
 ├── scripts/
 │   └── hesabfa.py              # رابط CLI (self-contained)
@@ -177,16 +230,16 @@ python3 "$(hesabfa)/scripts/hesabfa.py" invoice save \
 
 ---
 
-## نکات امنیتی مهم
+## 🛡️ نکات امنیتی مهم
 
-1. **هرگز** apiKey و loginToken را در فایل قرار ندهید.
-2. متغیرهای محیطی فقط در session terminal جاری معتبرند.
+1. **هرگز** `apiKey` و `loginToken` را در فایل‌های پروژه قرار ندهید.
+2. متغیرهای محیطی فقط در سشن ترمینال جاری معتبرند (برای دائمی شدن، باید در تنظیمات سیستم ست شوند).
 3. خروجی `--dry-run` کلیدها را ماسک می‌کند (`abcd…`) — خیالتان راحت باشد.
-4. قبل از هر `delete` از کاربر تأیید صریح بگیرید.
+4. قبل از هر دستور `delete` از کاربر تأیید صریح بگیرید.
 
 ---
 
-## رفع اشکال
+## 🔧 رفع اشکال (Troubleshooting)
 
 | مشکل | راه‌حل |
 |------|--------|
@@ -198,7 +251,7 @@ python3 "$(hesabfa)/scripts/hesabfa.py" invoice save \
 
 ---
 
-## منبع
+## 🔗 منابع
 
 - مستندات رسمی حسابفا: [https://www.hesabfa.com/help/api](https://www.hesabfa.com/help/api)
-- پروژه GitHub: `<LINK_REPO>`
+- پروژه GitHub: [https://github.com/msnwoodpainting/hesabfa-accounting](https://github.com/msnwoodpainting/hesabfa-accounting)
